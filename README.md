@@ -23,31 +23,38 @@
 本系統架構捨棄龐雜框架，採用純 Python 實作。當使用者在前端提交資料時，後端將啟動多執行緒處理，由「隨機分流控制軌（分層雙盲邏輯）」與「核心運算資料軌（雙幾何命理引擎）」並行交織。
 
 ### 📌 全系統多執行緒資料流向圖
-```text
-                   ┌─── [ 信仰量表 ] ───► 【 隨機分流控制軌 】 (Step 2)
-                    │                         │
-[ 使用者前端提交 ] ─┤                         ▼
-   (Step 1)         │                  分層隨機池分配組別 ──┐
-                    │                                       │ (控制流注入組別標籤)
-                    └─── [ 五維初始場 ] ──► 【 核心運算資料軌 】    ▼ (Step 3)
-                                              │
-                                       (真太陽時校正)
-                                              │
-                                              ▼
-                                【 建立大一統報告骨架模板 】
-                        ┌──────────────────────────────────────┐
-                        │  一、個人命盤解析（A/B組皆全體真實）    │
-                        │  二、個人四維分析與建議（內容分流）    │
-                        │  三、明年的運勢分析與建議（內容分流）  │
-                        └──────────────────┬───────────────────┘
-                                           │
-                                           ▼
-                                 【 解盤動態門控閘道 】
-                                           ├─► A 組 ─► 雙幾何同化 ─► 實算文本注入二、三
-                                           └─► B 組 ─► 巴納姆組裝 ─► 話術文本注入二、三
-                                                                     │
-                                                                     ▼
-                                                             [ 雙盲評分 1~5 星 ] ──► 去識別化 CSV
+
+```mermaid
+graph TD
+    %% 節點樣式定義
+    classDef input fill:#2d3748,stroke:#3b82f6,stroke-width:2px,color:#fff;
+    classDef control fill:#2d3748,stroke:#ec4899,stroke-width:2px,color:#fff;
+    classDef data fill:#2d3748,stroke:#10b981,stroke-width:2px,color:#fff;
+    classDef template fill:#1a202c,stroke:#a855f7,stroke-width:2px,color:#fff;
+    classDef gate fill:#1a202c,stroke:#f59e0b,stroke-width:2px,color:#fff;
+    classDef output fill:#2d3748,stroke:#64748b,stroke-width:1px,color:#fff;
+
+    %% 流程圖主體
+    USER[使用者前端提交 Step 1]:::input -->|信仰量表| CTRL[隨機分流控制軌 Step 2]:::control
+    USER -->|五維初始場| DATA[核心運算資料軌]:::data
+
+    CTRL --> POOL[分層隨機池分配組別]:::control
+    DATA -->|真太陽時校正| BLOCK[建立大一統報告骨架模板]:::template
+
+    POOL --> GATE
+    BLOCK --> 一、個人命盤解析_A/B組皆全體真實:::template
+    BLOCK --> 二、個人四維分析與建議_內容分流:::template
+    BLOCK --> 三、明年的運勢分析與建議_內容分流:::template
+
+    一、個人命盤解析_A/B組皆全體真實 --> GATE[解盤動態門控閘道 Step 3]:::gate
+    二、個人四維分析與建議_內容分流 --> GATE
+    三、明年的運勢分析與建議_內容分流 --> GATE
+
+    GATE -->|A 組 放行| REAL[雙幾何同化 --> 實算文本注入二、三]:::data
+    GATE -->|B 組 阻斷| BARNUM[巴納姆組裝 --> 話術文本注入二、三]:::control
+
+    REAL --> SCORE[雙盲評分 1~5 星 --> 去識別化 CSV]:::output
+    BARNUM --> SCORE
 ```
 
 *   **Step 1. 前端資料觀測與信仰分層 (初始場輸入)**：
@@ -69,7 +76,7 @@
 收集完 100 位測試者的匿名數據後，專題將使用 Python scipy.stats 模組進行獨立樣本 T 檢定（Independent t-test）。我們以科學界公認的 p-value < 0.05 作為具備統計顯著性（Statistical Significance）的唯一判準：
 
 *   **情境一：證偽成功 (A_mean ≈ B_mean 且均拿下高分)**：成功證明玄學本質為高明的巴納姆效應。人類大腦會主動代償並對號入座，底層玄學公式並不具備顯著的統計學意義。
-*   **情境二：發現新大陸 (A_mean > B_mean 且 p-value < 0.05)**：證實真報告顯著優於假報告！高度支持「數值分析模型」類比假說，證明玄學具備資料科學的規律性。下一步將啟動資料探勘（Data Mining），抓出這 100 筆生辰數據中的最大公因數。
+*   **情境商二：發現新大陸 (A_mean > B_mean 且 p-value < 0.05)**：證實真報告顯著優於假報告！高度支持「數值分析模型」類比假說，證明玄學具備資料科學的規律性。下一步將啟動資料探勘（Data Mining），抓出這 100 筆生辰數據中的最大公因數。
 *   **情境三：終極諷刺 (A_mean < B_mean 且 p-value < 0.05)**：傳統公式全面失靈，心理學話術大獲全勝。證明算命產業高度依賴心理暗示與冷讀術。
 *   **情境四：系統雜訊過大 (兩組評分無顯著差異 且 p-value ≥ 0.05)**：統計效能（Statistical Power）不足。可能源於 UI 易用性低落、報告文案具備攻擊性，或受限於 N=100 的小樣本分母。
 
