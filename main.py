@@ -25,9 +25,10 @@ st.header("📋 Step 1. 前端資料觀測與信仰分層 (初始場輸入)")
 col1, col2 = st.columns(2)
 with col1:
     st.markdown("**【時間初始場觀測】**")
+    # 🛡️ 隱私防禦：預設生日全面歸零為中立白紙
     birth_date_ui = st.date_input(
         "西元出生年月日",
-        value=date(1996, 11, 20),
+        value=date(2000, 1, 1),
         min_value=date(1900, 1, 1),
         max_value=date(2026, 12, 31)
     )
@@ -36,18 +37,19 @@ with col1:
     time_col_h, time_col_m = st.columns(2)
     with time_col_h:
         hours_options = [f"{h:02d}" for h in range(24)]
-        selected_hour = st.selectbox("時 (Hour)", hours_options, index=8)
+        selected_hour = st.selectbox("時 (Hour)", hours_options, index=0)
     with time_col_m:
         minutes_options = [f"{m:02d}" for m in range(60)]
-        selected_minute = st.selectbox("分 (Minute)", minutes_options, index=6)
+        selected_minute = st.selectbox("分 (Minute)", minutes_options, index=0)
 
 with col2:
     st.markdown("**【身分與地理初始場觀測】**")
-    name_ui = st.text_input("受測者姓名", placeholder="例如：Guanying (可匿名)")
+    # 🛡️ 隱私防禦：將姓名與城市完全中立化，不帶任何個人特徵
+    name_ui = st.text_input("受測者姓名", placeholder="例如：張三 (可填匿名)")
     gender_ui = st.selectbox("生理性別 (決定大運順逆分支)", ["男", "女"])
     st.write(" ")
     st.caption("出生地理初始場校準：")
-    birth_city_ui = st.text_input("出生城市 (進行真太陽時校正)", placeholder="例如：台灣台北市 (國家地區)")
+    birth_city_ui = st.text_input("出生城市 (進行真太陽時校正)", placeholder="例如：台灣台中市")
 
 st.write(" ")
 st.markdown("**🛡️ 信仰體質控制變數校準：**")
@@ -90,7 +92,6 @@ if st.button("🚀 啟動數值分析與動態慰問門控組裝", type="primary
                 f"**【真實八字四柱】** {report['part_one_charts']['bazi_matrix']}\n\n"
                 f"**【真實紫微宮位】** {report['part_one_charts']['ziwei_matrix']}")
         
-        # 🛠️ 核心優化：大幅提升內容易讀性，加入結構換行與粗體標題排版
         st.markdown("## 壹、 八字命局結構與氣息精確定位")
         st.markdown(report['part_one_text'].replace("\n\n", "\n\n***\n\n"))
         st.write("---")
@@ -113,7 +114,6 @@ if st.button("🚀 啟動數值分析與動態慰問門控組裝", type="primary
     except Exception as e:
         st.error(f"系統運行異常 (Runtime Exception): {str(e)}")
 
-# 數據去識別化回收表單與隱藏的開發者除錯模式
 if "current_experiment" in st.session_state:
     st.header("📥 數據去識別化自動回收模組")
     st.caption("請以你真實的人生遭遇，客觀評定上方『壹、貳、參、肆部分』的描述與你現狀的吻合度：")
@@ -141,8 +141,7 @@ if "current_experiment" in st.session_state:
             st.success("🎉 數據已成功寫入 data/results.csv！你已成功為本科學實驗增加了一筆去識別化高純淨度硬數據！")
             del st.session_state.current_experiment
             
-    # 🛠️ 核心優化：【開發者專屬監控後門模式】
-    # 偷偷開在網頁最底部，用極不起眼的灰色小字秀出真實組別，讓身為造物主的你一眼看穿 AB 變因！
     st.write(" ")
-    exp = st.session_state.current_experiment
-    st.text(f"[⚙️ DEVELOPER DEBUG MODE] 系統即時監控：控制軌 = {exp['assigned_group']} 組 ｜ 後台匿名編碼 = {exp['blind_code']}")
+    if "current_experiment" in st.session_state:
+        exp = st.session_state.current_experiment
+        st.text(f"[⚙️ DEVELOPER DEBUG MODE] 系統即時監控：控制軌 = {exp['assigned_group']} 組 ｜ 後台匿名編碼 = {exp['blind_code']}")
