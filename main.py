@@ -2,7 +2,7 @@
 import sys
 import os
 
-# 🛡️ 核心路徑防禦：強迫雲端主機將當前根目錄實體化寫入系統路徑，封死 ModuleNotFoundError！
+# 核心路徑防禦：強迫雲端主機將當前根目錄實體化寫入系統路徑，封死 ModuleNotFoundError！
 current_dir = os.path.dirname(os.path.abspath(__file__))
 if current_dir not in sys.path:
     sys.path.insert(0, current_dir)
@@ -19,6 +19,8 @@ if "router" not in st.session_state:
     st.session_state.router = StratifiedBlockRouter()
 if "gate_controller" not in st.session_state:
     st.session_state.gate_controller = UnifiedGateController()
+if "submitted" not in st.session_state:
+    st.session_state.submitted = False
 
 st.set_page_config(page_title="反算命大師", page_icon="📡", layout="centered")
 
@@ -57,12 +59,15 @@ with col2:
 
 st.write(" ")
 st.markdown("**🛡️ 信仰體質控制變數校準：**")
-st.caption("【量表定義】 0 ~ 4 分：科學理性派（不信玄學）｜ 5 分：中立並尊重 ｜ 6 ~ 10 分：玄學感性派（深信引引導）")
+st.caption("【量表定義】 0 ~ 4 分：科學理性派（不信玄學）｜ 5 分：中立並尊重 ｜ 6 ~ 10 分：玄學感性派（深信引導）")
 belief_score = st.slider("請客觀評估你目前對命理玄學的「真實信仰程度」：", 0, 10, 0)
 
 st.write("---")
 
 if st.button("🚀 啟動數值分析與動態門控組裝", type="primary"):
+    # 若重新產生報告，解除鎖定狀態
+    st.session_state.submitted = False
+    
     b_hour = int(selected_hour)
     b_minute = int(selected_minute)
         
@@ -121,7 +126,7 @@ if st.button("🚀 啟動數值分析與動態門控組裝", type="primary"):
 # =========================================================================
 # 📥 現代化數據去識別化自動回收模組 (拋轉至 Google 試算表永久資料庫)
 # =========================================================================
-if "current_experiment" in st.session_state:
+if "current_experiment" in st.session_state and not st.session_state.submitted:
     st.header("📥 數據去識別化自動回收模組")
     st.caption("請以你真實的人生遭遇，客觀評定上方『壹、貳、參、肆部分』的描述與你現狀的吻合度：")
     
@@ -157,13 +162,14 @@ if "current_experiment" in st.session_state:
                 ])
                 
                 st.balloons()
-                st.success("🎉 數據已成功寫入雲端永久資料庫！你已成功為本科學實驗增加了一筆去識別化高純淨度硬數據！")
+                st.success("數據已成功寫入雲端永久資料庫！你已成功為本科學實驗增加了一筆去識別化高純淨度硬數據！")
+                
+                # 觸發狀態鎖死，隱藏表單
+                st.session_state.submitted = True
                 del st.session_state.current_experiment
                 
             except Exception as e:
                 st.error(f"資料庫寫入異常 (Database Error): {str(e)}")
-            
-    st.write(" ")
-    if "current_experiment" in st.session_state:
-        exp = st.session_state.current_experiment
-        st.text(f"[⚙️ DEVELOPER DEBUG MODE] 系統即時監控：控制軌 = {exp['assigned_group']} 組 ｜ 後台匿名編碼 = {exp['blind_code']}")
+
+elif st.session_state.submitted:
+    st.info("您已成功完成本次雙盲測試數據提交。為確保樣本獨立性，表單已鎖定。")
