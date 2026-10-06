@@ -1,14 +1,14 @@
 # 📡 反算命大師 (Anti-FortuneTeller Master)
 > 傳統命理模型的實證科學壓力測試：基於分層隨機抽樣之雙盲 A/B 測試全端系統
 
-**📜 License:** MIT | **💻 Platform:** Streamlit Cloud | **📊 Data Engine:** Python (Pure)
+**📜 License:** MIT | **💻 Platform:** Streamlit Cloud | **📊 Data Engine:** Python (Pure) + GCP Google Sheets API
 
 ---
 
 ### 專案結論 (TL;DR)
-本獨立開發作品採用純 Python 實作一套全端實驗系統，探討傳統玄學演算法（八字/紫微）能否走向類似「數值天氣預報」之數學分析模型，或本質上屬於心理學巴納姆效應（Barnum Effect）。系統於前端導入「信仰體質控制變數」進行子母體分層，後端以「分層區組隨機池演算法」強制維持實驗組與對照組 1:1 之盲性分配，並內建數據去識別化實時回收模組，為下階段 p-value 假設檢定提供高純淨度之匿名硬數據。
+本獨立開發作品採用純 Python 實作一套全端實驗系統，探討傳統玄學演算法（八字/紫微）能否走向類似「數值天氣預報」之數學分析模型，或本質上屬於心理學巴納姆效應（Barnum Effect）。系統於前端導入「信仰體質控制變數」進行子母體分層，後端以「分層區組隨機池演算法」強制維持實驗組與對照組 1:1 之盲性分配，並內建數據去識別化實時回收模組，直接靜默拋轉至外部 Google 試算表，為下階段 p-value 假設檢定提供高純淨度之匿名硬數據。
 
-👉 **如果您想直接參與本科學實驗的盲測壓力測試，請點擊跳轉至：[全自動雙盲測試公開網址](https://anti-fortuneteller-master-6cnypwpkjuww38fjeiw2v8.streamlit.app/)請在收到反饋後填寫下方表單，感謝！**
+👉 **如果您想直接參與本科學實驗的盲測壓力測試，請點擊跳轉至：[全自動雙盲測試公開網址](https://anti-fortuneteller-master-6cnypwpkjuww38fjeiw2v8.streamlit.app/)。請在收到反饋後填寫下方表單，感謝！**
 
 ---
 
@@ -60,7 +60,7 @@ graph TD
     GATE -->|A 組 放行| REAL["雙幾何同化 ──► 實算文本注入二、三"]:::data
     GATE -->|B 組 阻斷| BARNUM["巴納姆組裝 ──► 話術文本注入二、三"]:::control
 
-    REAL --> SCORE["雙盲評分 1~5 星 ──► 去識別化 CSV"]:::output
+    REAL --> SCORE["雙盲評分 1~5 星 ──► GCP Google 試算表"]:::output
     BARNUM --> SCORE
 ```
 
@@ -83,10 +83,11 @@ graph TD
 
 收集完受測者匿名數據後，本作品將使用 Python `scipy.stats` 模組進行獨立樣本 T 檢定（Independent t-test）。我們以科學界公認的 p-value < 0.05 作為具備統計顯著性（Statistical Significance）的唯一判準：
 
-*   **情境一：證偽成功 ($A_{\text{mean}} \approx B_{\text{mean}}$ 且均拿下高分)**：成功證明玄學本質為高明的巴納姆效應。人類大腦會主動代償並對號入座，底層玄學公式不具備顯著的統計學意義。
-*   **情境二：支持假說 ($A_{\text{mean}} > B_{\text{mean}}$ 且 p-value < 0.05)**：證實真實報告顯著優於對照組話術。高度支持「數值分析模型」類比假說，證明玄學具備資料科學的規律性。
-*   **情境三：反向反饋 ($A_{\text{mean}} < B_{\text{mean}}$ 且 p-value < 0.05)**：傳統公式效能失靈，心理學話術大獲全勝。證明傳統命理產業高度依賴冷讀術與心理暗示。
+*   **情境一：證偽成功 (\(A_{\text{mean}} \approx B_{\text{mean}}\) 且均拿下高分)**：成功證明玄學本質為高明的巴納姆效應。人類大腦會主動代償並對號入座，底層玄學公式不具備顯著的統計學意義。
+*   **情境二：支持假說 (\(A_{\text{mean}} > B_{\text{mean}}\) 且 p-value < 0.05)**：證實真實報告顯著優於對照組話術。高度支持「數值分析模型」類比假說，證明玄學具備資料科學的規規律性。
+*   **情境三：反向反饋 (\(A_{\text{mean}} < B_{\text{mean}}\) 且 p-value < 0.05)**：傳統公式效能失靈，心理學話術大獲全勝。證明傳統命理產業高度依賴冷讀術與心理暗示。
 *   **情境四：系統雜訊過大 (兩組評分無顯著差異 且 p-value ≥ 0.05)**：統計效能（Statistical Power）不足。可能源於 UI 易用性、報告文案辨識度，或受限於小樣本分母。
+
 ---
 
 ## 4. 開發者自我審查與權限承諾 (Limitations & Topology)
@@ -99,8 +100,9 @@ Anti-FortuneTeller-Master/
 │
 ├── README.md               # 獨立作品開發計畫書 (本文件)
 ├── main.py                 # 全系統多執行緒主控制流程 (指揮官)
+├── requirements.txt        # 雲端 Linux 相依套件清單 (純文字環境配置)
 │
-├── core/                   # 100% 原創編寫的核心實驗組件
+├── core/                   # 100% 原創編寫的核心 A/B 測試門控組件
 │   ├── stratification.py   # Step 1. 前端信仰量表計分與初始場驗證
 │   ├── randomization.py    # Step 2. 記憶體動態分層區組隨機池演算法
 │   └── gate_control.py     # Step 3. 大一統報告模板與門控解盤填充機
