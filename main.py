@@ -8,7 +8,6 @@ if current_dir not in sys.path:
     sys.path.insert(0, current_dir)
 
 import streamlit as st
-import csv
 from datetime import date
 from core.stratification import InputInitializer
 from core.randomization import StratifiedBlockRouter
@@ -58,7 +57,7 @@ with col2:
 
 st.write(" ")
 st.markdown("**🛡️ 信仰體質控制變數校準：**")
-st.caption("【量表定義】 0 ~ 4 分：科學理性派（不信玄學）｜ 5 分：中立並尊重 ｜ 6 ~ 10 分：玄學感性派（深信引導）")
+st.caption("【量表定義】 0 ~ 4 分：科學理性派（不信玄學）｜ 5 分：中立並尊重 ｜ 6 ~ 10 分：玄學感性派（深信引引導）")
 belief_score = st.slider("請客觀評估你目前對命理玄學的「真實信仰程度」：", 0, 10, 0)
 
 st.write("---")
@@ -119,6 +118,9 @@ if st.button("🚀 啟動數值分析與動態門控組裝", type="primary"):
     except Exception as e:
         st.error(f"系統運行異常 (Runtime Exception): {str(e)}")
 
+# =========================================================================
+# 📥 現代化數據去識別化自動回收模組 (拋轉至 Google 試算表永久資料庫)
+# =========================================================================
 if "current_experiment" in st.session_state:
     st.header("📥 數據去識別化自動回收模組")
     st.caption("請以你真實的人生遭遇，客觀評定上方『壹、貳、參、肆部分』的描述與你現狀的吻合度：")
@@ -130,21 +132,36 @@ if "current_experiment" in st.session_state:
         if score is None:
             st.error("請先點選星星進行評分再送出！")
         else:
-            os.makedirs("data", exist_ok=True)
-            csv_path = "data/results.csv"
-            file_exists = os.path.isfile(csv_path)
-            
-            with open(csv_path, mode="a", newline="", encoding="utf-8") as f:
-                writer = csv.writer(f)
-                if not file_exists:
-                    writer.writerow(["belief_score", "belief_level", "assigned_group", "blind_code", "score", "feedback"])
+            try:
+                import json
+                import gspread
+                from google.oauth2.credentials import Credentials
+
+                # 1. 讀取 Streamlit Secrets 中的永久靜默授權 Token
+                token_dict = json.loads(st.secrets["gcp_token"])
+                creds = Credentials.from_authorized_user_info(token_dict)
+                client = gspread.authorize(creds)
                 
+                # 2. 開啟手動建立好的雲端試算表
+                sheet = client.open("Anti-FortuneTeller-Database").sheet1
+                
+                # 3. 執行資料寫入
                 exp = st.session_state.current_experiment
-                writer.writerow([exp["belief_score"], exp["belief_level"], exp["assigned_group"], exp["blind_code"], score + 1, feedback_text])
+                sheet.append_row([
+                    exp["belief_score"], 
+                    exp["belief_level"], 
+                    exp["assigned_group"], 
+                    exp["blind_code"], 
+                    score + 1, 
+                    feedback_text
+                ])
                 
-            st.balloons()
-            st.success("🎉 數據已成功寫入 data/results.csv！你已成功為本科學實驗增加了一筆去識別化高純淨度硬數據！")
-            del st.session_state.current_experiment
+                st.balloons()
+                st.success("🎉 數據已成功寫入雲端永久資料庫！你已成功為本科學實驗增加了一筆去識別化高純淨度硬數據！")
+                del st.session_state.current_experiment
+                
+            except Exception as e:
+                st.error(f"資料庫寫入異常 (Database Error): {str(e)}")
             
     st.write(" ")
     if "current_experiment" in st.session_state:
