@@ -79,7 +79,7 @@ graph TD
 
 ---
 
-markdown_content = """
+
 ## 3. 統計假說驗證矩陣 (Data Matrix & Hypothesis Testing)
 
 收集完受測者匿名數據後，本作品將使用 Python `scipy.stats` 模組進行獨立樣本 T 檢定（Independent t-test）。我們以科學界公認的 p-value < 0.05 作為具備統計顯著性（Statistical Significance）的唯一判準：
