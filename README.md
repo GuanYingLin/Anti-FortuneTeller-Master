@@ -78,7 +78,7 @@ graph TD
             *   **🧠 B 組（對照組文本）**：全面隔離資料軌。改調用後端「高級巴納姆心理學偽裝庫」，1:1 複製 A 組的四大章節小標題與星曜術語外殼，測試人類大腦的代償與對號入座邊界。
 
 ---
-markdown_content = r"""
+
 ## 3. 統計假說驗證矩陣 (Data Matrix & Hypothesis Testing)
 
 收集完受測者匿名數據後，本作品將使用 Python `scipy.stats` 模組進行獨立樣本 T 檢定（Independent t-test）。我們以科學界公認的 p-value < 0.05 作為具備統計顯著性（Statistical Significance）的唯一判準：
@@ -87,7 +87,6 @@ markdown_content = r"""
 * **情境二：支持假說 [\(A_{\text{mean}} > B_{\text{mean}}\) 且 p-value < 0.05]**：證實真實報告顯著優於對照組話術。高度支持「數值分析模型」類比假說，證明玄學具備資料科學的規規律性。
 * **情境三：反向反饋 [\(A_{\text{mean}} < B_{\text{mean}}\) 且 p-value < 0.05]**：傳統公式效能失靈，心理學話術大獲全勝。證明傳統命理產業高度依賴冷讀術與心理暗示。
 * **情境四：系統雜訊過大 [兩組評分無顯著差異 且 p-value \(\ge\) 0.05]**：統計效能（Statistical Power）不足。可能源於 UI 易用性、報告文案辨識度，或受限於小樣本分母。
-"""
 
 ---
 
